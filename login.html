@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | AVANTROX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+    <a href="index.html" class="auth-logo">AVANTROX</a>
+
+    <main class="auth-container">
+        <section class="auth-box login-box">
+
+            <a href="index.html" class="back-link">
+                ← Voltar ao início
+            </a>
+
+            <div class="auth-heading">
+                <span class="auth-subtitle">SEU UNIVERSO ESPERA</span>
+                <h1>Bem-vindo de volta</h1>
+                <p>Entre na sua conta e continue sua jornada.</p>
+            </div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="loginIdentifier">E-mail ou Nick</label>
+                    <input
+                        type="text"
+                        id="loginIdentifier"
+                        placeholder="Digite seu e-mail ou nick"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <div class="password-field">
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                         >
+
+                <button
+                        type="button"
+                        class="toggle-password"
+                        data-target="loginPassword"
+                        aria-label="Mostrar senha"
+                        aria-pressed="false"
+                >◉</button>
+            </div>
+                <div class="forgot-password">
+                    <a href="recuperar-senha.html" id="forgotPasswordLink">
+                        Esqueceu a senha?
+                    </a>
+                </div>
+            </div>
+                <button type="submit" class="register-submit">
+                    ENTRAR NO AVANTROX
+                </button>
+
+                <p id="loginMessage" class="form-message" aria-live="polite"></p>
+
+            </form>
+
+            <div class="auth-footer">
+                Ainda não possui uma conta?
+                <a href="cadastro.html">Criar conta</a>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="auth-bottom">
+        © 2026 AVANTROX — Todos os direitos reservados.
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

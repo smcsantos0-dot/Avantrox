@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil | AVANTROX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="profile-page">
+
+    <header class="profile-header">
+        <a href="index.html" class="profile-logo">AVANTROX</a>
+
+        <nav class="profile-nav">
+            <a href="index.html">Início</a>
+            <a href="index.html#classes">Classes</a>
+            <button type="button" class="profile-logout" id="logoutButton">
+                Sair
+            </button>
+        </nav>
+    </header>
+
+    <main class="profile-container">
+
+        <div class="profile-title">
+            <span>AVANTROX ACCOUNT</span>
+            <h1>Meu Perfil</h1>
+            <p>Suas informações e progresso dentro do universo AVANTROX.</p>
+        </div>
+
+        <section class="profile-card">
+
+            <div class="profile-main">
+
+                <div class="profile-avatar-area">
+
+                    <img
+                        src="https://placehold.co/160x160/160d25/bb8cff?text=AV"
+                        alt="Avatar do jogador"
+                        id="profileAvatar"
+                        class="profile-avatar"
+                    >
+
+                    <label for="avatarInput" class="avatar-edit">
+                        Alterar avatar
+                    </label>
+
+                    <input
+                        type="file"
+                        id="avatarInput"
+                        accept="image/png,image/jpeg,image/webp"
+                        hidden
+                    >
+
+                </div>
+
+                <div class="profile-user-info">
+
+                    <span class="profile-tag">AVENTUREIRO</span>
+
+                    <h2 id="profileUsername">Carregando...</h2>
+
+                    <p id="profileEmail">Carregando...</p>
+
+                    <span class="profile-status">
+                        <span class="status-dot"></span>
+                        Conta ativa
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="level-section">
+
+                <div class="level-info">
+
+                    <div>
+                        <span class="info-label">NÍVEL ATUAL</span>
+                        <h2 id="profileLevel">1</h2>
+                    </div>
+
+                    <div class="xp-info">
+                        <span class="info-label">EXPERIÊNCIA</span>
+                        <p>
+                            <span id="profileXP">0</span> /
+                            <span id="profileNextXP">100</span> XP
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="xp-bar">
+                    <div
+                        class="xp-progress"
+                        id="profileXPProgress"
+                        style="width: 0%"
+                        role="progressbar"
+                        aria-label="Progresso de experiência"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    ></div>
+                </div>
+
+                <p class="xp-description">
+                    Continue sua jornada para alcançar o próximo nível.
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+                <span>SEU PERSONAGEM</span>
+                <h2>Classe escolhida</h2>
+            </div>
+
+            <div class="class-profile-card">
+
+                <div class="class-symbol">⚔</div>
+
+                <div>
+                    <span class="info-label">CLASSE ATUAL</span>
+                    <h3 id="profileClass">Guerreiro</h3>
+                    <p id="profileClassDescription">
+                        Especialista em combate e resistência.
+                    </p>
+                </div>
+
+                <span class="class-level">
+                    NÍVEL <span id="profileClassLevel">1</span>
+                </span>
+
+            </div>
+
+            <p class="class-change-info">
+                <strong>Troca de classe:</strong>
+                a primeira troca é liberada no nível 50.
+                Depois, uma nova troca é permitida a cada
+                50 níveis (100, 150, 200...).
+            </p>
+
+        </section>
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+                <span>PROGRESSO</span>
+                <h2>Estatísticas</h2>
+            </div>
+
+            <div class="profile-stats">
+
+                <div class="stat-card">
+                    <span class="stat-icon">✦</span>
+                    <p>Nível</p>
+                    <h3 id="statLevel">1</h3>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-icon">⚔</span>
+                    <p>Classe</p>
+                    <h3 id="statClass">Guerreiro</h3>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-icon">◈</span>
+                    <p>Experiência</p>
+                    <h3 id="statXP">0 XP</h3>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- MISSÕES AVANTROX -->
+
+        <section class="profile-section missions-section" id="missionsSection">
+
+            <div class="section-heading">
+                <span>JORNADA DO AVENTUREIRO</span>
+                <h2>Minhas Missões</h2>
+            </div>
+
+            <div class="missions-panel">
+
+                <div class="missions-header">
+                    <div>
+                        <h3>Seu progresso</h3>
+                        <p>Complete missões para ganhar experiência.</p>
+                    </div>
+
+                    <span class="missions-counter" id="missionsCounter">
+                        0 / 0
+                    </span>
+                </div>
+
+                <div class="missions-progress-bar">
+                    <div
+                        class="missions-progress-fill"
+                        id="missionsProgressFill"
+                        style="width: 0%"
+                    ></div>
+                </div>
+
+                <div
+                    class="missions-list"
+                    id="missionsList"
+                    aria-live="polite"
+                >
+                    <p>Carregando missões...</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="missions-refresh-button"
+                    id="refreshMissionsButton"
+                >
+                    ATUALIZAR MISSÕES
+                </button>
+
+                <p
+                    class="missions-message"
+                    id="missionsMessage"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+        </section>
+
+        <!-- CONFIGURAÇÕES -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+                <span>CONFIGURAÇÕES</span>
+                <h2>Minha conta</h2>
+            </div>
+
+            <div class="account-info">
+
+                <form id="changeUsernameForm" class="account-edit-form">
+
+                    <label for="newUsername">
+                        Nome de usuário / Nick
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newUsername"
+                        minlength="3"
+                        maxlength="20"
+                        placeholder="Digite seu novo nick"
+                        required
+                    >
+
+                    <button type="submit" class="profile-action-button">
+                        SALVAR NOVO NICK
+                    </button>
+
+                    <p
+                        id="usernameMessage"
+                        class="profile-message"
+                        aria-live="polite"
+                    ></p>
+
+                </form>
+
+                <div class="account-edit-divider"></div>
+
+                <form id="changeEmailForm" class="account-edit-form">
+
+                    <label for="newEmail">
+                        Novo endereço de e-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="newEmail"
+                        placeholder="Digite seu novo e-mail"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <button type="submit" class="profile-action-button">
+                        ENVIAR CÓDIGO DE CONFIRMAÇÃO
+                    </button>
+
+                    <p
+                        id="emailMessage"
+                        class="profile-message"
+                        aria-live="polite"
+                    ></p>
+
+                </form>
+
+                <form
+                    id="verifyEmailForm"
+                    class="account-edit-form"
+                    hidden
+                >
+
+                    <label for="emailVerificationCode">
+                        Código recebido no novo e-mail
+                    </label>
+
+                    <input
+                        type="text"
+                        id="emailVerificationCode"
+                        placeholder="Digite o código de confirmação"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        maxlength="8"
+                        required
+                    >
+
+                    <button type="submit" class="profile-action-button">
+                        CONFIRMAR NOVO E-MAIL
+                    </button>
+
+                    <p
+                        id="verificationMessage"
+                        class="profile-message"
+                        aria-live="polite"
+                    ></p>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <a href="index.html" class="profile-home-button">
+            VOLTAR AO INÍCIO
+        </a>
+
+    </main>
+
+    <footer class="profile-footer">
+        © 2026 AVANTROX — Todos os direitos reservados.
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

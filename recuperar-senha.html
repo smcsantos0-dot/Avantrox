@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | AVANTROX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+    <main class="auth-container">
+
+        <a href="index.html" class="auth-logo">AVANTROX</a>
+
+        <section class="auth-card">
+
+            <h1>RECUPERAR SENHA</h1>
+
+            <p class="auth-description">
+                Digite seu e-mail cadastrado para receber
+                um código de recuperação.
+            </p>
+
+            <form id="recoveryRequestForm">
+
+                <label for="recoveryEmail">E-mail</label>
+
+                <input
+                    type="email"
+                    id="recoveryEmail"
+                    placeholder="Digite seu e-mail"
+                    autocomplete="email"
+                    required
+                >
+
+                <button type="submit" class="auth-button">
+                    ENVIAR CÓDIGO
+                </button>
+
+                <p id="recoveryRequestMessage" class="auth-message"></p>
+
+            </form>
+
+            <form id="recoveryVerifyForm" hidden>
+
+                <div class="recovery-divider"></div>
+
+                <label for="recoveryCode">Código recebido</label>
+
+                <input
+                    type="text"
+                    id="recoveryCode"
+                    placeholder="Digite o código"
+                    required
+                >
+
+                <label for="newRecoveryPassword">Nova senha</label>
+
+                <input
+                    type="password"
+                    id="newRecoveryPassword"
+                    placeholder="Digite sua nova senha"
+                    minlength="8"
+                    required
+                >
+
+                <label for="confirmRecoveryPassword">Confirmar senha</label>
+
+                <input
+                    type="password"
+                    id="confirmRecoveryPassword"
+                    placeholder="Confirme sua nova senha"
+                    minlength="8"
+                    required
+                >
+
+                <button type="submit" class="auth-button">
+                    ALTERAR SENHA
+                </button>
+
+                <p id="recoveryVerifyMessage" class="auth-message"></p>
+
+            </form>
+
+            <a href="login.html" class="auth-back-link">
+                Voltar para o login
+            </a>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

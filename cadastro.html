@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro | AVANTROX</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+    <a href="index.html" class="auth-logo">AVANTROX</a>
+
+    <main class="auth-container">
+
+        <div class="auth-box">
+
+            <a href="index.html" class="back-link">
+                ← Voltar ao início
+            </a>
+
+            <div class="auth-heading">
+                <h1>CRIAR CONTA</h1>
+
+                <p>
+                    Sua jornada começa aqui.
+                    Prepare-se para explorar AVANTROX.
+                </p>
+            </div>
+
+            <form id="registerForm">
+
+                <div class="form-group">
+                    <label for="username">Nome de usuário</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Escolha seu nome"
+                        minlength="3"
+                        maxlength="20"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Digite seu e-mail"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Mínimo de 8 caracteres"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        Confirmar senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Digite a senha novamente"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="register-submit">
+                    CRIAR MINHA CONTA
+                </button>
+
+                <p id="registerMessage" class="form-message"
+                   aria-live="polite"></p>
+
+            </form>
+
+            <div class="auth-footer">
+
+                <p>
+                    Já possui uma conta?
+                    <a href="login.html">Faça login</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="auth-bottom">
+        © 2026 AVANTROX. Todos os direitos reservados.
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
