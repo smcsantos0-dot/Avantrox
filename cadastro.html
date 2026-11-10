@@ -40,6 +40,7 @@
                         type="text"
                         id="username"
                         name="username"
+                        autocomplete="username"
                         placeholder="Escolha seu nome"
                         minlength="3"
                         maxlength="20"
@@ -54,6 +55,7 @@
                         type="email"
                         id="email"
                         name="email"
+                        autocomplete="email"
                         placeholder="Digite seu e-mail"
                         required
                     >
@@ -62,14 +64,19 @@
                 <div class="form-group">
                     <label for="password">Senha</label>
 
+                    <div class="password-field">
                     <input
                         type="password"
+                        autocomplete="new-password"
+                        maxlength="72"
                         id="password"
                         name="password"
                         placeholder="Mínimo de 8 caracteres"
                         minlength="8"
                         required
                     >
+                        <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar senha" aria-pressed="false" aria-controls="password" title="Mostrar senha">◉</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -77,14 +84,34 @@
                         Confirmar senha
                     </label>
 
+                    <div class="password-field">
                     <input
                         type="password"
+                        autocomplete="new-password"
+                        maxlength="72"
                         id="confirmPassword"
                         name="confirmPassword"
                         placeholder="Digite a senha novamente"
                         minlength="8"
                         required
                     >
+                        <button type="button" class="toggle-password" data-target="confirmPassword" aria-label="Mostrar senha" aria-pressed="false" aria-controls="confirmPassword" title="Mostrar senha">◉</button>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="playerClass">Classe inicial</label>
+                    <select id="playerClass" name="playerClass" required>
+                        <option value="" disabled selected>Escolha sua classe</option>
+                        <option value="Guerreiro">Guerreiro — força e resistência</option>
+                        <option value="Mago">Mago — magia e distância</option>
+                        <option value="Assassino">Assassino — velocidade e precisão</option>
+                        <option value="Arqueiro">Arqueiro — precisão e mobilidade</option>
+                        <option value="Invocador">Invocador — invocações e estratégia</option>
+                        <option value="Paladino">Paladino — defesa e suporte</option>
+                    </select>
+                    <small class="class-hint">Ceifador é uma classe secreta desbloqueável por missão a partir do nível 100.</small>
                 </div>
 
                 <button type="submit" class="register-submit">

@@ -2116,3 +2116,422 @@ section {
 .toggle-password:hover {
     color: #ffffff;
 }
+
+/* =========================================================
+   AVANTROX — ATUALIZAÇÃO DO PERFIL E SISTEMA DE MISSÕES
+   ========================================================= */
+
+.profile-page {
+    --av-purple: #ad79ed;
+    --av-soft: #d2aaff;
+    --av-muted: #a99bb9;
+}
+
+body.profile-page .profile-header {
+    position: sticky;
+    top: 0;
+    left: auto;
+    width: 100%;
+    min-height: 75px;
+    animation: none;
+}
+
+.profile-page .profile-logout {
+    color: #d2aaff;
+    background: rgba(113, 53, 181, .12);
+    font: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background .25s, box-shadow .25s;
+}
+
+.profile-page .profile-logout:hover {
+    background: #7135b5;
+    color: #fff;
+    box-shadow: 0 0 16px rgba(156, 92, 228, .35);
+}
+
+.profile-page .profile-logout:disabled,
+.profile-page .profile-action-button:disabled {
+    opacity: .55;
+    cursor: wait;
+}
+
+.profile-page [hidden] {
+    display: none !important;
+}
+
+.profile-page .profile-avatar {
+    display: block;
+    background: #21152e;
+}
+
+.profile-page .profile-user-info {
+    min-width: 0;
+}
+
+.profile-page .profile-user-info h2,
+.profile-page .profile-user-info p {
+    overflow-wrap: anywhere;
+}
+
+.profile-page .xp-progress {
+    width: 0;
+    transition: width .6s ease;
+}
+
+.profile-page .profile-status {
+    margin-top: 12px;
+}
+
+.profile-page .stat-card {
+    min-width: 0;
+    transition: transform .25s, border-color .25s;
+}
+
+.profile-page .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: #b783ff;
+}
+
+.profile-page .stat-card h3 {
+    overflow-wrap: anywhere;
+}
+
+.profile-page .account-edit-form input {
+    font: inherit;
+    font-size: 14px;
+}
+
+.profile-page .account-edit-form input:focus-visible,
+.profile-page button:focus-visible,
+.profile-page a:focus-visible {
+    outline: 2px solid #d2aaff;
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   SISTEMA DE MISSÕES
+   ========================================================= */
+
+.missions-panel {
+    padding: 30px;
+    border: 1px solid rgba(160, 101, 230, .35);
+    border-radius: 14px;
+    background: linear-gradient(
+        145deg,
+        rgba(32, 19, 49, .96),
+        rgba(16, 10, 27, .96)
+    );
+    box-shadow: 0 0 35px rgba(115, 49, 180, .10);
+}
+
+.missions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.missions-header h3 {
+    color: #fff;
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+.missions-header p {
+    color: #a99bb9;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.missions-counter {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(183, 131, 255, .35);
+    border-radius: 8px;
+    background: rgba(113, 53, 181, .16);
+    color: #d2aaff;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+/* BARRA DE PROGRESSO DAS MISSÕES */
+
+.missions-progress-bar {
+    width: 100%;
+    height: 12px;
+    overflow: hidden;
+    margin-bottom: 26px;
+    border-radius: 20px;
+    background: #080510;
+}
+
+.missions-progress-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        #7135b5,
+        #c18aff
+    );
+    box-shadow: 0 0 12px #9b55e9;
+    transition: width .6s ease;
+}
+
+/* LISTA DE MISSÕES */
+
+.missions-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.missions-list > p {
+    grid-column: 1 / -1;
+    color: #a99bb9;
+}
+
+/* CARTÃO DA MISSÃO */
+
+.mission-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 190px;
+    padding: 22px;
+    border: 1px solid rgba(160, 101, 230, .30);
+    border-radius: 12px;
+    background: #130e1e;
+    transition:
+        transform .25s,
+        border-color .25s,
+        box-shadow .25s;
+}
+
+.mission-card:hover {
+    transform: translateY(-4px);
+    border-color: #b783ff;
+    box-shadow: 0 8px 25px rgba(115, 49, 180, .20);
+}
+
+.mission-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+/* ÍCONE DA MISSÃO */
+
+.mission-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: #d2aaff;
+    background: rgba(113, 53, 181, .18);
+    border: 1px solid rgba(183, 131, 255, .30);
+    border-radius: 10px;
+    font-size: 23px;
+}
+
+/* STATUS DA MISSÃO */
+
+.mission-status {
+    padding: 7px 10px;
+    color: #d2aaff;
+    background: rgba(113, 53, 181, .16);
+    border: 1px solid rgba(183, 131, 255, .25);
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+/* TÍTULO E DESCRIÇÃO */
+
+.mission-card h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.4;
+}
+
+.mission-card > p {
+    margin-bottom: 18px;
+    color: #a99bb9;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* RECOMPENSA DE XP */
+
+.mission-reward {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid rgba(180, 135, 230, .2);
+    color: #d2aaff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* =========================================================
+   MISSÕES CONCLUÍDAS
+   ========================================================= */
+
+.mission-completed {
+    border-color: rgba(102, 219, 154, .3);
+    background: linear-gradient(
+        145deg,
+        rgba(22, 43, 36, .4),
+        #130e1e
+    );
+}
+
+.mission-completed .mission-icon {
+    color: #66db9a;
+    border-color: rgba(102, 219, 154, .3);
+    background: rgba(102, 219, 154, .1);
+}
+
+.mission-completed .mission-status {
+    color: #66db9a;
+    border-color: rgba(102, 219, 154, .3);
+    background: rgba(102, 219, 154, .1);
+}
+
+.mission-completed .mission-reward {
+    color: #66db9a;
+}
+
+/* =========================================================
+   BOTÃO DE ATUALIZAR MISSÕES
+   ========================================================= */
+
+.missions-refresh-button {
+    display: block;
+    margin: 25px auto 0;
+    padding: 13px 25px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(
+        100deg,
+        #7135b5,
+        #9d59db
+    );
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition:
+        transform .25s,
+        box-shadow .25s;
+}
+
+.missions-refresh-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(156, 92, 228, .4);
+}
+
+.missions-refresh-button:disabled {
+    opacity: .55;
+    cursor: wait;
+    transform: none;
+}
+
+.missions-message {
+    margin-top: 15px;
+    color: #b9a9ca;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 800px) {
+    .missions-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .missions-panel {
+        padding: 20px;
+    }
+
+    .missions-header {
+        align-items: flex-start;
+    }
+
+    .mission-card {
+        min-height: 0;
+    }
+
+    .profile-page .class-level {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .missions-header {
+        flex-direction: column;
+    }
+}
+
+/* REDUZIR ANIMAÇÕES QUANDO SOLICITADO */
+
+@media (prefers-reduced-motion: reduce) {
+    .profile-page *,
+    .profile-page *::before,
+    .profile-page *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* =========================================================
+   FIM DA ATUALIZAÇÃO AVANTROX
+   ========================================================= */
+
+/* AVANTROX: lore, classe secreta e seleção de classe */
+.lore-section { padding: 90px 8%; background: radial-gradient(ellipse at top, #271638, #100d19 75%); }
+.lore-inner { max-width: 850px; margin: auto; text-align: center; }
+.lore-kicker, .secret-label { color: #c39aff; font-size: .8rem; letter-spacing: .12em; font-weight: 700; }
+.lore-inner h2 { color: #e5d4ff; margin: 14px 0 28px; }
+.lore-inner p { color: #c9c3d3; line-height: 1.85; margin-bottom: 16px; }
+.lore-inner .lore-note { font-size: .8rem; opacity: .7; }
+.class-card-secret { border-color: #8b688f; background: linear-gradient(145deg, #271b32, #110d18); }
+.class-card-secret .secret-label { margin-bottom: 12px; }
+.form-group select { width: 100%; padding: 14px; border: 1px solid #6c5485; border-radius: 8px; background: #1b1527; color: #f5efff; font: inherit; }
+.form-group select:focus { outline: 2px solid #b88cff; outline-offset: 2px; }
+.class-hint { display: block; margin-top: 8px; color: #bba9d0; line-height: 1.5; }
+@media (max-width: 700px) { .lore-section { padding: 60px 6%; } }
+
+/* Inventário, equipamentos e aljava do perfil */
+.equipment-panel,.quiver-panel,.profile-inventory-grid{margin-top:18px;display:grid;gap:12px}
+.equipment-panel{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.equipment-slot,.inventory-entry,.quiver-panel{background:rgba(20,12,38,.8);border:1px solid rgba(178,140,255,.3);border-radius:12px;padding:15px;color:#f2eaff}
+.equipment-slot,.inventory-entry{display:flex;flex-direction:column;gap:8px}
+.equipment-slot span,.inventory-entry span,.inventory-hint{color:#c7b9df;font-size:.9rem}
+.profile-inventory-grid{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.quiver-panel{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.quiver-panel p{width:100%;margin:0}
+.inventory-entry button,.quiver-panel button{background:#8b5bd5;color:white;border:0;border-radius:8px;padding:9px 12px;cursor:pointer}
+.inventory-entry button:hover,.quiver-panel button:hover{background:#a87cf0}
+.quiver-panel button:disabled{opacity:.5;cursor:not-allowed}
+#inventoryFeedback{min-height:1.4em;color:#d8bcff}
+.inventory-shop-link{display:inline-block;margin-top:14px;color:#cfa9ff}
+
+/* Respeita links ocultos até a autenticação ser verificada */
+[data-auth-nav][hidden] { display: none !important; }

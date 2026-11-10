@@ -29,11 +29,13 @@
 
             <a href="#sobre">Sobre</a>
 
+            <a href="#lore">Lore</a>
             <a href="#classes">Classes</a>
 
-            <a href="cadastro.html" class="register-btn">Cadastro</a>
+            <a href="cadastro.html" class="register-btn" data-auth-nav="login" hidden>Cadastro</a>
 
-            <a href="login.html" class="login-btn">Login</a>
+            <a href="login.html" class="login-btn" data-auth-nav="login" hidden>Entrar</a>
+            <a href="perfil.html" class="login-btn" data-auth-nav="profile" hidden>Meu perfil</a>
 
         </nav>
 
@@ -99,6 +101,24 @@
 
     </section>
 
+
+
+    <!-- LORE: introdução narrativa proposta para o universo AVANTROX -->
+    <section id="lore" class="lore-section">
+        <div class="lore-inner">
+            <p class="lore-kicker">CRÔNICAS DO UNIVERSO</p>
+            <h2>QUANDO AS ESTRELAS SE CALARAM</h2>
+            <p>Antes dos reinos e de suas muralhas, forças antigas atravessavam o céu.
+               Um acontecimento conhecido apenas como <strong>O Silêncio</strong>
+               fragmentou a memória do mundo e deixou ruínas onde antes havia civilizações.</p>
+            <p>Agora, antigas ordens disputam relíquias, criaturas emergem das regiões esquecidas
+               e sinais cósmicos voltam a iluminar a noite. Ninguém sabe se anunciam
+               um novo começo — ou o retorno daquilo que foi selado.</p>
+            <p>Você desperta em meio a esse conflito. Sua classe define como começa a jornada,
+               mas suas escolhas determinarão o que restará de AVANTROX.</p>
+            <p class="lore-note">Texto narrativo inicial — poderá ser expandido com personagens, regiões e eventos oficiais.</p>
+        </div>
+    </section>
 
     <!-- CLASSES -->
     <section id="classes" class="classes">
@@ -173,6 +193,33 @@
 
                 <span>Estilo: Defesa e suporte</span>
 
+            </div>
+
+
+            <!-- ARQUEIRO -->
+            <div class="class-card">
+                <h3>ARQUEIRO</h3>
+                <p>Domina arcos, disparos precisos e o posicionamento estratégico.
+                   Mantém os inimigos à distância e explora seus pontos fracos.</p>
+                <span>Estilo: Precisão e mobilidade</span>
+            </div>
+
+            <!-- INVOCADOR -->
+            <div class="class-card">
+                <h3>INVOCADOR</h3>
+                <p>Canaliza energias místicas para convocar aliados e entidades
+                   que auxiliam no ataque, na defesa e no controle do combate.</p>
+                <span>Estilo: Invocações e estratégia</span>
+            </div>
+
+            <!-- CEIFADOR: classe secreta, não disponível no cadastro -->
+            <div class="class-card class-card-secret">
+                <p class="secret-label">CLASSE SECRETA · DESBLOQUEIO NO NÍVEL 100</p>
+                <h3>CEIFADOR</h3>
+                <p>Uma classe envolta em mistério, ligada aos limites entre a vida,
+                   a morte e as forças desconhecidas do universo. Só pode ser
+                   desbloqueada por uma missão especial ao atingir o nível 100.</p>
+                <span>Estilo: Poder sombrio e técnicas especiais</span>
             </div>
 
         </div>

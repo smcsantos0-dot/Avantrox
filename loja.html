@@ -13,14 +13,16 @@
 
         <nav class="shop-nav">
             <a href="index.html">Início</a>
+            <a href="index.html#lore">Lore</a>
             <a href="index.html#classes">Classes</a>
-            <a href="perfil.html">Meu perfil</a>
+            <a href="perfil.html" data-auth-nav="profile" hidden>Meu perfil</a>
+            <a href="login.html" data-auth-nav="login" hidden>Entrar</a>
         </nav>
 
         <div class="shop-balance">
             <span>✦</span>
-            <strong id="coinBalance">1.000</strong>
-            <small>MOEDAS</small>
+            <strong id="coinBalance">—</strong>
+            <small>ASTRAS</small>
         </div>
     </header>
 
@@ -30,8 +32,8 @@
             <p class="shop-eyebrow">MERCADO DE AVENTUREIROS</p>
             <h1>LOJA DE <span>ITENS</span></h1>
             <p>
-                Prepare-se para sua jornada. Encontre equipamentos,
-                relíquias e poções para enfrentar os desafios de Avantrox.
+                Escolha equipamentos para diferentes classes. Encontre
+                flechas, aljavas, relíquias e poções para enfrentar os desafios de AVANTROX.
             </p>
         </section>
 
@@ -50,107 +52,127 @@
                 <button class="category-button" data-category="armaduras">Armaduras</button>
                 <button class="category-button" data-category="acessorios">Acessórios</button>
                 <button class="category-button" data-category="pocoes">Poções</button>
+                <button class="category-button" data-category="flechas">Flechas e Aljavas</button>
+                <button class="category-button" data-category="magia">Magia e Invocações</button>
             </div>
 
             <div class="shop-grid">
-
                 <article class="shop-item" data-category="armas">
-                    <div class="item-image weapon-image">⚔️</div>
-                    <span class="item-type">ARMA</span>
+                    <div class="item-image weapon-image" aria-hidden="true">⚔️</div>
+                    <span class="item-type">ARMA · GUERREIRO</span>
                     <h3>Lâmina do Eclipse</h3>
-                    <p>Uma espada antiga que carrega a energia de um eclipse.</p>
+                    <p>Uma lâmina marcada pelas ruínas do Silêncio.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 250</span>
-                        <button class="buy-button" data-name="Lâmina do Eclipse" data-price="250">Comprar</button>
+                        <button class="buy-button" data-item-id="eclipse_blade" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="armas">
-                    <div class="item-image weapon-image">🏹</div>
-                    <span class="item-type">ARMA</span>
+                    <div class="item-image weapon-image" aria-hidden="true">🏹</div>
+                    <span class="item-type">ARMA · ARQUEIRO</span>
                     <h3>Arco das Sombras</h3>
-                    <p>Um arco misterioso usado por antigos caçadores.</p>
+                    <p>Disparos precisos para quem domina a distância.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 300</span>
-                        <button class="buy-button" data-name="Arco das Sombras" data-price="300">Comprar</button>
+                        <button class="buy-button" data-item-id="shadow_bow" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="armaduras">
-                    <div class="item-image armor-image">🛡️</div>
+                    <div class="item-image weapon-image" aria-hidden="true">🛡️</div>
                     <span class="item-type">ARMADURA</span>
                     <h3>Armadura do Guardião</h3>
-                    <p>Uma proteção resistente criada para grandes guerreiros.</p>
+                    <p>Proteção resistente para batalhas prolongadas.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 400</span>
-                        <button class="buy-button" data-name="Armadura do Guardião" data-price="400">Comprar</button>
+                        <button class="buy-button" data-item-id="guardian_armor" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="armaduras">
-                    <div class="item-image armor-image">⛑️</div>
-                    <span class="item-type">ARMADURA</span>
-                    <h3>Elmo do Abismo</h3>
-                    <p>Um elmo raro encontrado nas profundezas do reino.</p>
+                    <div class="item-image weapon-image" aria-hidden="true">🛡️</div>
+                    <span class="item-type">ESCUDO · PALADINO</span>
+                    <h3>Escudo da Aurora</h3>
+                    <p>Símbolo de defesa e proteção.</p>
                     <div class="item-footer">
-                        <span class="item-price">✦ 200</span>
-                        <button class="buy-button" data-name="Elmo do Abismo" data-price="200">Comprar</button>
+                        <span class="item-price">✦ 350</span>
+                        <button class="buy-button" data-item-id="paladin_shield" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
+                <article class="shop-item" data-category="magia">
+                    <div class="item-image weapon-image" aria-hidden="true">🪄</div>
+                    <span class="item-type">ARMA · MAGO</span>
+                    <h3>Cajado Astral</h3>
+                    <p>Canaliza a energia das estrelas distantes.</p>
+                    <div class="item-footer">
+                        <span class="item-price">✦ 280</span>
+                        <button class="buy-button" data-item-id="arcane_staff" disabled>Entrar para comprar</button>
+                    </div>
+                </article>
+                <article class="shop-item" data-category="magia">
+                    <div class="item-image weapon-image" aria-hidden="true">🔮</div>
+                    <span class="item-type">FOCO · INVOCADOR</span>
+                    <h3>Talismã do Invocador</h3>
+                    <p>Relíquia usada em rituais de convocação.</p>
+                    <div class="item-footer">
+                        <span class="item-price">✦ 320</span>
+                        <button class="buy-button" data-item-id="summoner_talisman" disabled>Entrar para comprar</button>
+                    </div>
+                </article>
                 <article class="shop-item" data-category="acessorios">
-                    <div class="item-image accessory-image">💍</div>
+                    <div class="item-image weapon-image" aria-hidden="true">💍</div>
                     <span class="item-type">ACESSÓRIO</span>
                     <h3>Anel Estelar</h3>
-                    <p>Uma relíquia que guarda o brilho de uma estrela distante.</p>
+                    <p>Uma relíquia que guarda o brilho de uma estrela.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 150</span>
-                        <button class="buy-button" data-name="Anel Estelar" data-price="150">Comprar</button>
+                        <button class="buy-button" data-item-id="star_ring" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="acessorios">
-                    <div class="item-image accessory-image">📿</div>
+                    <div class="item-image weapon-image" aria-hidden="true">📿</div>
                     <span class="item-type">ACESSÓRIO</span>
                     <h3>Amuleto Arcano</h3>
-                    <p>Um amuleto antigo envolvido por energia misteriosa.</p>
+                    <p>Amuleto envolvido por energia misteriosa.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 180</span>
-                        <button class="buy-button" data-name="Amuleto Arcano" data-price="180">Comprar</button>
+                        <button class="buy-button" data-item-id="arcane_amulet" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="pocoes">
-                    <div class="item-image potion-image">🧪</div>
-                    <span class="item-type">POÇÃO</span>
+                    <div class="item-image weapon-image" aria-hidden="true">🧪</div>
+                    <span class="item-type">CONSUMÍVEL</span>
                     <h3>Poção Vital</h3>
-                    <p>Uma mistura especial utilizada para recuperar energia.</p>
+                    <p>Recuperação para a jornada.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 50</span>
-                        <button class="buy-button" data-name="Poção Vital" data-price="50">Comprar</button>
+                        <button class="buy-button" data-item-id="vital_potion" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
                 <article class="shop-item" data-category="pocoes">
-                    <div class="item-image potion-image">🧙</div>
-                    <span class="item-type">POÇÃO</span>
+                    <div class="item-image weapon-image" aria-hidden="true">✨</div>
+                    <span class="item-type">CONSUMÍVEL</span>
                     <h3>Essência Arcana</h3>
-                    <p>Uma essência misteriosa associada à energia mágica.</p>
+                    <p>Essência ligada à energia mágica.</p>
                     <div class="item-footer">
                         <span class="item-price">✦ 75</span>
-                        <button class="buy-button" data-name="Essência Arcana" data-price="75">Comprar</button>
+                        <button class="buy-button" data-item-id="arcane_essence" disabled>Entrar para comprar</button>
                     </div>
                 </article>
-
+                <article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">🏹</div><span class="item-type">FLECHA · PACOTE ×20</span><h3>Flecha Comum</h3><p>Munição básica. Cada disparo consome 1 flecha.</p><div class="item-footer"><span class="item-price">✦ 20</span><button class="buy-button" data-item-id="arrow_common" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">🔥</div><span class="item-type">FLECHA · PACOTE ×20</span><h3>Flecha Flamejante</h3><p>Munição elemental de fogo.</p><div class="item-footer"><span class="item-price">✦ 60</span><button class="buy-button" data-item-id="arrow_fire" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">❄️</div><span class="item-type">FLECHA · PACOTE ×20</span><h3>Flecha Glacial</h3><p>Munição elemental de gelo.</p><div class="item-footer"><span class="item-price">✦ 60</span><button class="buy-button" data-item-id="arrow_ice" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">☠️</div><span class="item-type">FLECHA · PACOTE ×20</span><h3>Flecha Venenosa</h3><p>Munição com efeito de veneno.</p><div class="item-footer"><span class="item-price">✦ 70</span><button class="buy-button" data-item-id="arrow_poison" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">⚡</div><span class="item-type">FLECHA · PACOTE ×20</span><h3>Flecha Elétrica</h3><p>Munição com energia elétrica.</p><div class="item-footer"><span class="item-price">✦ 90</span><button class="buy-button" data-item-id="arrow_lightning" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">🎒</div><span class="item-type">ALJAVA · COMUM</span><h3>Aljava Comum</h3><p>Capacidade inicial: 40. Aprimorável.</p><div class="item-footer"><span class="item-price">✦ 120</span><button class="buy-button" data-item-id="quiver_common" disabled>Entrar para comprar</button></div></article>
+<article class="shop-item" data-category="flechas"><div class="item-image weapon-image" aria-hidden="true">🎒</div><span class="item-type">ALJAVA · RARA</span><h3>Aljava Rara</h3><p>Capacidade inicial: 80. Aprimorável.</p><div class="item-footer"><span class="item-price">✦ 350</span><button class="buy-button" data-item-id="quiver_rare" disabled>Entrar para comprar</button></div></article>
             </div>
 
-            <p id="shopMessage" class="shop-message" aria-live="polite"></p>
+            <p id="shopMessage" class="shop-message" aria-live="polite">Entre na sua conta para consultar seu saldo e comprar itens.</p>
 
             <section class="inventory-section">
                 <h2>Minha sacola</h2>
-                <p>Itens comprados nesta demonstração.</p>
+                <p>Itens associados à sua conta AVANTROX.</p>
                 <ul id="inventoryList" class="inventory-list">
-                    <li>Nenhum item comprado ainda.</li>
+                    <li>Entre na sua conta para consultar seus itens.</li>
                 </ul>
             </section>
 

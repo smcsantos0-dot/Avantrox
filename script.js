@@ -186,6 +186,7 @@ function avantroxSetText(id, value) {
 
         const username = usernameInput.value.trim();
         const email = emailInput.value.trim();
+        const playerClass = document.getElementById("playerClass").value;
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
@@ -220,7 +221,8 @@ function avantroxSetText(id, value) {
                 body: JSON.stringify({
                     username,
                     email,
-                    password
+                    password,
+                    playerClass
                 })
             });
 
@@ -263,7 +265,16 @@ function avantroxSetText(id, value) {
             "Especialista em agilidade, furtividade e precisão.",
 
         Paladino:
-            "Combina resistência, proteção e poderes sagrados."
+            "Combina resistência, proteção e poderes sagrados.",
+
+        Arqueiro:
+            "Especialista em ataques à distância, precisão e mobilidade.",
+
+        Invocador:
+            "Convoca aliados místicos e controla o campo de batalha.",
+
+        Ceifador:
+            "Classe secreta que domina técnicas sombrias."
     };
 
     async function loadPlayerProfile() {
@@ -339,6 +350,11 @@ function avantroxSetText(id, value) {
             avantroxSetText(
                 "profileNextXP",
                 avantroxNumber(xpNeeded)
+            );
+
+            avantroxSetText(
+                "profileXPRemaining",
+                avantroxNumber(Math.max(0, xpNeeded - xp))
             );
 
             avantroxSetText(
@@ -1020,163 +1036,108 @@ function avantroxSetText(id, value) {
 })();
 
 
+
+
 // ==========================================
 // LOJA DE ITENS - AVANTROX
 // ==========================================
 
 (() => {
-    const shopPage =
-        document.querySelector(".shop-page");
+    if (!document.querySelector(".shop-page")) return;
 
-    if (!shopPage) return;
+    const balanceElement = document.getElementById("coinBalance");
+    const messageElement = document.getElementById("shopMessage");
+    const inventoryElement = document.getElementById("inventoryList");
+    const buyButtons = [...document.querySelectorAll(".buy-button")];
+    let authenticated = false;
+    let busy = false;
 
-    // Sistema demonstrativo local.
-    // As compras ainda não são salvas no banco.
-    let coins = 1000;
+    function message(text) {
+        if (messageElement) messageElement.textContent = text;
+    }
+    function render(data) {
+        if (balanceElement) balanceElement.textContent =
+            Number(data.astras).toLocaleString("pt-BR");
+        if (!inventoryElement) return;
+        inventoryElement.replaceChildren();
+        const items = Array.isArray(data.inventory) ? data.inventory : [];
+        if (!items.length) {
+            const li = document.createElement("li");
+            li.textContent = "Você ainda não comprou itens.";
+            inventoryElement.appendChild(li);
+        }
+        for (const item of items) {
+            const li = document.createElement("li");
+            li.textContent = `${item.name} ×${item.quantity}`;
+            inventoryElement.appendChild(li);
+        }
+    }
+    function buttonsState() {
+        for (const button of buyButtons) {
+            button.disabled = !authenticated || busy;
+            button.textContent = authenticated ? "Comprar" : "Entrar para comprar";
+        }
+    }
+    document.querySelectorAll(".category-button").forEach(button => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll(".category-button").forEach(b =>
+                b.classList.toggle("active", b === button));
+            document.querySelectorAll(".shop-item").forEach(item => {
+                item.classList.toggle("hidden",
+                    button.dataset.category !== "todos" &&
+                    item.dataset.category !== button.dataset.category);
+            });
+        });
+    });
 
-    const inventory = [];
-
-    const balanceElement =
-        document.getElementById(
-            "coinBalance"
-        );
-
-    const messageElement =
-        document.getElementById(
-            "shopMessage"
-        );
-
-    const inventoryElement =
-        document.getElementById(
-            "inventoryList"
-        );
-
-    function updateBalance() {
-        if (balanceElement) {
-            balanceElement.textContent =
-                avantroxNumber(coins);
+    async function loadShop() {
+        try {
+            const response = await fetch("/api/shop", { credentials: "same-origin", cache: "no-store" });
+            if (response.status === 401) {
+                authenticated = false;
+                message("Faça login para comprar. Os itens e Astras são individuais por conta.");
+                if (balanceElement) balanceElement.textContent = "—";
+                return;
+            }
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "Falha ao carregar loja.");
+            authenticated = true;
+            render(data);
+            message("Loja carregada. As compras ficam salvas na sua conta.");
+        } catch (error) {
+            authenticated = false;
+            message(error.message || "Não foi possível carregar a loja.");
+        } finally {
+            buttonsState();
         }
     }
 
-    function updateInventory() {
-        if (!inventoryElement) return;
-
-        inventoryElement.replaceChildren();
-
-        if (inventory.length === 0) {
-            const item =
-                document.createElement("li");
-
-            item.textContent =
-                "Nenhum item comprado ainda.";
-
-            inventoryElement.appendChild(item);
-            return;
-        }
-
-        inventory.forEach(name => {
-            const item =
-                document.createElement("li");
-
-            item.textContent = name;
-
-            inventoryElement.appendChild(item);
+    for (const button of buyButtons) {
+        button.addEventListener("click", async () => {
+            if (!authenticated || busy) return;
+            busy = true;
+            buttonsState();
+            try {
+                const response = await fetch("/api/shop/buy", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ itemId: button.dataset.itemId })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Compra não realizada.");
+                render(data);
+                message(data.message);
+            } catch (error) {
+                message(error.message || "Erro ao comprar.");
+            } finally {
+                busy = false;
+                buttonsState();
+            }
         });
     }
-
-    const categoryButtons =
-        document.querySelectorAll(
-            ".category-button"
-        );
-
-    const shopItems =
-        document.querySelectorAll(
-            ".shop-item"
-        );
-
-    categoryButtons.forEach(button => {
-        button.addEventListener(
-            "click",
-            () => {
-                categoryButtons.forEach(item => {
-                    item.classList.remove(
-                        "active"
-                    );
-                });
-
-                button.classList.add(
-                    "active"
-                );
-
-                const category =
-                    button.dataset.category;
-
-                shopItems.forEach(item => {
-                    const matches =
-                        category === "todos" ||
-                        item.dataset.category === category;
-
-                    item.classList.toggle(
-                        "hidden",
-                        !matches
-                    );
-                });
-            }
-        );
-    });
-
-    document.querySelectorAll(
-        ".buy-button"
-    ).forEach(button => {
-        button.addEventListener(
-            "click",
-            () => {
-                const name =
-                    button.dataset.name;
-
-                const price =
-                    Number(
-                        button.dataset.price
-                    );
-
-                if (
-                    !name ||
-                    !Number.isFinite(price) ||
-                    price <= 0
-                ) {
-                    if (messageElement) {
-                        messageElement.textContent =
-                            "Não foi possível realizar a compra.";
-                    }
-
-                    return;
-                }
-
-                if (coins < price) {
-                    if (messageElement) {
-                        messageElement.textContent =
-                            "Moedas insuficientes!";
-                    }
-
-                    return;
-                }
-
-                coins -= price;
-                inventory.push(name);
-
-                updateBalance();
-                updateInventory();
-
-                if (messageElement) {
-                    messageElement.textContent =
-                        `${name} comprado com sucesso!`;
-                }
-            }
-        );
-    });
-
-    updateBalance();
-    updateInventory();
+    buttonsState();
+    loadShop();
 })();
 
 
@@ -1447,6 +1408,10 @@ document.addEventListener(
                         isHidden
                             ? "◎"
                             : "◉";
+
+                    button.title = isHidden
+                        ? "Ocultar senha"
+                        : "Mostrar senha";
                 }
             );
         });
@@ -1456,3 +1421,23 @@ document.addEventListener(
 // ==========================================
 // FIM DO SCRIPT AVANTROX
 // ==========================================
+
+
+// NAVEGAÇÃO CONFORME LOGIN (LOJA, INÍCIO E DOWNLOAD)
+(() => {
+    const links = document.querySelectorAll('[data-auth-nav]');
+    if (!links.length) return;
+    async function updateNavigation() {
+        let loggedIn = false;
+        try {
+            const response = await fetch('/api/auth/me', {
+                credentials: 'same-origin', cache: 'no-store'
+            });
+            loggedIn = response.ok;
+        } catch { loggedIn = false; }
+        for (const link of links) {
+            link.hidden = link.dataset.authNav !== (loggedIn ? 'profile' : 'login');
+        }
+    }
+    updateNavigation();
+})();
