@@ -186,7 +186,7 @@ function avantroxSetText(id, value) {
 
         const username = usernameInput.value.trim();
         const email = emailInput.value.trim();
-        const playerClass = document.getElementById("playerClass").value;
+        
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
@@ -221,15 +221,12 @@ function avantroxSetText(id, value) {
                 body: JSON.stringify({
                     username,
                     email,
-                    password,
-                    playerClass
+                    password
                 })
             });
 
             message.textContent =
-                "Conta criada com sucesso!";
-
-            window.location.href = "perfil.html";
+                "Confira seu e-mail, confirme sua conta e depois faça login.";
 
         } catch (error) {
             message.textContent =

@@ -83,6 +83,11 @@ if (!userColumns.has("xp")) {
     `);
 }
 
+if (!userColumns.has("supabase_id")) {
+    db.exec("ALTER TABLE users ADD COLUMN supabase_id TEXT");
+}
+db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_supabase_id ON users(supabase_id)");
+
 // ==========================================
 // TABELA DE MISSÕES
 // ==========================================
@@ -120,11 +125,11 @@ db.exec(`
 // ==========================================
 // LOJA: ASTRAS E INVENTÁRIO POR CONTA
 // ==========================================
-// Saldo inicial demonstrativo para testes (não representa moeda comprada).
+// Novas carteiras começam com zero Astras. Créditos exigem operação autorizada.
 db.exec(`
     CREATE TABLE IF NOT EXISTS player_wallets (
         user_id INTEGER PRIMARY KEY,
-        astras INTEGER NOT NULL DEFAULT 1000 CHECK(astras >= 0),
+        astras INTEGER NOT NULL DEFAULT 0 CHECK(astras >= 0),
         FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
     CREATE TABLE IF NOT EXISTS player_items (
@@ -198,7 +203,7 @@ function equipmentFor(userId) {
     };
 }
 const ensureWallet = db.prepare(
-    "INSERT OR IGNORE INTO player_wallets (user_id) VALUES (?)"
+    "INSERT OR IGNORE INTO player_wallets (user_id, astras) VALUES (?, 0)"
 );
 const readWallet = db.prepare(
     "SELECT astras FROM player_wallets WHERE user_id = ?"
@@ -466,14 +471,7 @@ function createPlayerSession(req, res, user) {
                 });
             }
 
-            try {
-                completeMission(user.id, "first_login");
-            } catch (missionError) {
-                console.error(
-                    "Erro na missão de login:",
-                    missionError
-                );
-            }
+            // Login no site não concede XP nem conclui missões.
 
             res.json({
                 success: true,
@@ -488,185 +486,101 @@ function createPlayerSession(req, res, user) {
     });
 }
 
+// Supabase Auth: somente a URL e a chave pública são necessárias aqui.
+const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
+const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || "";
+async function supabaseAuth(endpoint, payload) {
+    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+        const error = new Error("Configure SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY no servidor.");
+        error.status = 503;
+        throw error;
+    }
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/${endpoint}`, {
+        method: "POST",
+        headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(15000)
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        const error = new Error(data.msg || data.error_description || data.message || "Falha na autenticação.");
+        error.status = response.status === 429 ? 429 : 400;
+        throw error;
+    }
+    return data;
+}
+
 // ==========================================
 // CADASTRO
 // ==========================================
 
-app.post(
-    "/api/auth/register",
-    authLimiter,
-    async (req, res) => {
-        try {
-            const { username, email, password, playerClass } =
-                req.body || {};
-            const initialClasses = new Set([
-                "Guerreiro", "Mago", "Assassino",
-                "Arqueiro", "Invocador", "Paladino"
-            ]);
-            if (!initialClasses.has(playerClass)) {
-                return res.status(400).json({
-                    error: "Selecione uma classe inicial válida."
-                });
-            }
-
-            if (
-                typeof username !== "string" ||
-                typeof email !== "string" ||
-                typeof password !== "string"
-            ) {
-                return res.status(400).json({
-                    error: "Preencha todos os campos."
-                });
-            }
-
-            const cleanUsername = username.trim();
-            const cleanEmail = email.trim().toLowerCase();
-
-            if (!validUsername(cleanUsername)) {
-                return res.status(400).json({
-                    error:
-                        "O nick deve ter de 3 a 20 caracteres."
-                });
-            }
-
-            if (!validEmail(cleanEmail)) {
-                return res.status(400).json({
-                    error: "Digite um e-mail válido."
-                });
-            }
-
-            if (
-                password.length < 8 ||
-                password.length > 72
-            ) {
-                return res.status(400).json({
-                    error:
-                        "A senha deve ter entre 8 e 72 caracteres."
-                });
-            }
-
-            const existing = db.prepare(`
-                SELECT id
-                FROM users
-                WHERE username = ? OR email = ?
-            `).get(cleanUsername, cleanEmail);
-
-            if (existing) {
-                return res.status(409).json({
-                    error:
-                        "Este nick ou e-mail já está cadastrado."
-                });
-            }
-
-            const passwordHash = await bcrypt.hash(
-                password,
-                12
-            );
-
-            const result = db.prepare(`
-                INSERT INTO users
-                    (username, email, password, player_class)
-                VALUES (?, ?, ?, ?)
-            `).run(
-                cleanUsername,
-                cleanEmail,
-                passwordHash,
-                playerClass
-            );
-
-            createPlayerSession(req, res, {
-                id: Number(result.lastInsertRowid),
-                username: cleanUsername,
-                email: cleanEmail
-            });
-
-        } catch (error) {
-            if (
-                error.code &&
-                error.code.startsWith("SQLITE_CONSTRAINT")
-            ) {
-                return res.status(409).json({
-                    error:
-                        "Este nick ou e-mail já está cadastrado."
-                });
-            }
-
-            console.error("Erro no cadastro:", error);
-
-            res.status(500).json({
-                error: "Erro interno ao criar sua conta."
-            });
+app.post("/api/auth/register", authLimiter, async (req, res) => {
+    try {
+        const { username, email, password } = req.body || {};
+        const nick = typeof username === "string" ? username.trim() : "";
+        const mail = typeof email === "string" ? email.trim().toLowerCase() : "";
+        if (!validUsername(nick) || !validEmail(mail) ||
+            typeof password !== "string" || password.length < 8 || password.length > 72) {
+            return res.status(400).json({error:"Confira nick, e-mail e senha (mínimo 8 caracteres)."});
         }
-    }
-);
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-app.post(
-    "/api/auth/login",
-    authLimiter,
-    async (req, res) => {
-        try {
-            const { identifier, password } =
-                req.body || {};
-
-            if (
-                typeof identifier !== "string" ||
-                typeof password !== "string" ||
-                identifier.length > 254 ||
-                password.length < 1 ||
-                password.length > 72
-            ) {
-                return res.status(400).json({
-                    error:
-                        "Informe seu nick ou e-mail e sua senha."
-                });
-            }
-
-            const cleanIdentifier = identifier.trim();
-
-            const user = db.prepare(`
-                SELECT *
-                FROM users
-                WHERE username = ? COLLATE NOCASE
-                   OR email = ? COLLATE NOCASE
-            `).get(
-                cleanIdentifier,
-                cleanIdentifier
-            );
-
-            if (!user) {
-                return res.status(401).json({
-                    error:
-                        "Nick, e-mail ou senha incorretos."
-                });
-            }
-
-            const matches = await bcrypt.compare(
-                password,
-                user.password
-            );
-
-            if (!matches) {
-                return res.status(401).json({
-                    error:
-                        "Nick, e-mail ou senha incorretos."
-                });
-            }
-
-            createPlayerSession(req, res, user);
-
-        } catch (error) {
-            console.error("Erro no login:", error);
-
-            res.status(500).json({
-                error: "Erro interno ao realizar login."
-            });
+        if (db.prepare("SELECT id FROM users WHERE username = ? OR email = ?").get(nick,mail)) {
+            return res.status(409).json({error:"Nick ou e-mail já está cadastrado."});
         }
+        const result = await supabaseAuth("signup", {
+            email: mail, password,
+            data: { username: nick }
+        });
+        // Supabase pode ocultar se um e-mail já existe; não criar conta local aqui.
+        // A conta local é criada somente após login confirmado.
+        return res.json({success:true, confirmationRequired:true,
+            message:"Confira seu e-mail e clique no link de confirmação. Depois faça login."});
+    } catch (error) {
+        console.error("Falha no cadastro Supabase:", error.message);
+        res.status(error.status || 500).json({error:error.message || "Falha ao criar conta."});
     }
-);
+});
+
+app.post("/api/auth/login", authLimiter, async (req, res) => {
+    try {
+        const { identifier, password } = req.body || {};
+        if (typeof identifier !== "string" || !validEmail(identifier.trim()) ||
+            typeof password !== "string" || !password || password.length > 72) {
+            return res.status(400).json({error:"Entre com seu e-mail e senha."});
+        }
+        const email = identifier.trim().toLowerCase();
+        const auth = await supabaseAuth("token?grant_type=password", {email, password});
+        if (!auth.access_token || !auth.user?.id || !auth.user.email_confirmed_at) {
+            return res.status(403).json({error:"Confirme seu e-mail antes de entrar."});
+        }
+        let user = db.prepare("SELECT * FROM users WHERE supabase_id = ?").get(auth.user.id);
+        if (!user) {
+            // Nunca associar automaticamente uma conta antiga só pelo e-mail.
+            if (db.prepare("SELECT id FROM users WHERE email = ?").get(email)) {
+                return res.status(409).json({error:"Existe uma conta antiga com este e-mail. Solicite a migração antes de entrar."});
+            }
+            const proposed = auth.user.user_metadata?.username;
+            const nick = validUsername(proposed) ? proposed : `jogador_${auth.user.id.slice(0,8)}`;
+            if (db.prepare("SELECT id FROM users WHERE username = ?").get(nick)) {
+                return res.status(409).json({error:"Este nick já está em uso. Entre em contato com o suporte."});
+            }
+            const placeholder = crypto.randomBytes(32).toString("hex");
+            const inserted = db.prepare(`INSERT INTO users
+                (username,email,password,player_class,level,xp,supabase_id)
+                VALUES (?,?,?,'Não escolhida',1,0,?)`)
+                .run(nick,email,placeholder,auth.user.id);
+            user = db.prepare("SELECT * FROM users WHERE id = ?").get(inserted.lastInsertRowid);
+        }
+        createPlayerSession(req,res,user);
+    } catch (error) {
+        console.error("Falha no login Supabase:", error.message);
+        res.status(error.status || 500).json({error:
+            error.status === 400 ? "E-mail ou senha inválidos, ou e-mail ainda não confirmado." :
+            error.message || "Não foi possível entrar."});
+    }
+});
 
 // ==========================================
 // DADOS DO JOGADOR
@@ -677,10 +591,6 @@ app.get(
     requireAuth,
     (req, res) => {
         try {
-            completeMission(
-                req.session.userId,
-                "view_profile"
-            );
 
             const user = db.prepare(`
                 SELECT *
@@ -716,10 +626,6 @@ app.get(
     requireAuth,
     (req, res) => {
         try {
-            completeMission(
-                req.session.userId,
-                "view_progression"
-            );
 
             const user = db.prepare(`
                 SELECT level, xp
@@ -793,58 +699,7 @@ app.get(
     }
 );
 
-// ==========================================
-// TESTE DE XP - DESENVOLVIMENTO
-// ==========================================
-
-app.post(
-    "/api/player/xp/test",
-    requireAuth,
-    (req, res) => {
-        if (
-            process.env.NODE_ENV === "production" ||
-            process.env.ENABLE_TEST_XP !== "true"
-        ) {
-            return res.status(404).json({
-                error: "Rota não encontrada."
-            });
-        }
-
-        const amount = req.body?.amount;
-
-        if (
-            !Number.isSafeInteger(amount) ||
-            amount < 1 ||
-            amount > 10000
-        ) {
-            return res.status(400).json({
-                error:
-                    "Informe uma quantidade entre 1 e 10000 XP."
-            });
-        }
-
-        try {
-            const progression = addExperience(
-                req.session.userId,
-                amount
-            );
-
-            res.json({
-                success: true,
-                message: "Experiência adicionada!",
-                ...progression
-            });
-
-        } catch (error) {
-            console.error("Erro ao adicionar XP:", error);
-
-            res.status(500).json({
-                error:
-                    "Não foi possível adicionar experiência."
-            });
-        }
-    }
-);
+// A API pública do site não disponibiliza rotas para conceder XP.
 
 // ==========================================
 // ALTERAR NICK
