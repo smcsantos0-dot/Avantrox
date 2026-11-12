@@ -1139,210 +1139,96 @@ function avantroxSetText(id, value) {
 
 
 // ==========================================
-// RECUPERAÇÃO DE SENHA
+// RECUPERAÇÃO DE SENHA VIA LINK SUPABASE
 // ==========================================
-
 (() => {
-    const requestForm =
-        document.getElementById(
-            "recoveryRequestForm"
-        );
-
-    const verifyForm =
-        document.getElementById(
-            "recoveryVerifyForm"
-        );
-
+    const requestForm = document.getElementById("recoveryRequestForm");
+    const verifyForm = document.getElementById("recoveryVerifyForm");
     if (!requestForm || !verifyForm) return;
 
-    const emailInput =
-        document.getElementById(
-            "recoveryEmail"
-        );
+    const emailInput = document.getElementById("recoveryEmail");
+    const passwordInput = document.getElementById("newRecoveryPassword");
+    const confirmInput = document.getElementById("confirmRecoveryPassword");
+    const requestMessage = document.getElementById("recoveryRequestMessage");
+    const verifyMessage = document.getElementById("recoveryVerifyMessage");
+    let recoveryToken = null;
 
-    const codeInput =
-        document.getElementById(
-            "recoveryCode"
-        );
+    // O Supabase devolve o token na parte # do endereço, que não é enviada ao servidor.
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token = params.get("access_token");
+    const type = params.get("type");
+    const recoveryError = params.get("error_description");
+    if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname);
+    }
+    if (token && type === "recovery") {
+        recoveryToken = token;
+        requestForm.hidden = true;
+        verifyForm.hidden = false;
+        verifyMessage.textContent = "Link confirmado. Escolha uma nova senha.";
+    } else if (recoveryError) {
+        requestMessage.textContent = "O link expirou ou não é válido. Solicite outro.";
+    }
 
-    const passwordInput =
-        document.getElementById(
-            "newRecoveryPassword"
-        );
-
-    const confirmPasswordInput =
-        document.getElementById(
-            "confirmRecoveryPassword"
-        );
-
-    const requestMessage =
-        document.getElementById(
-            "recoveryRequestMessage"
-        );
-
-    const verifyMessage =
-        document.getElementById(
-            "recoveryVerifyMessage"
-        );
-
-    let recoveryEmail = "";
-    let requestInProgress = false;
-    let verifyInProgress = false;
-
-    requestForm.addEventListener(
-        "submit",
-        async event => {
-            event.preventDefault();
-
-            if (
-                requestInProgress ||
-                !requestForm.reportValidity()
-            ) {
-                return;
-            }
-
-            recoveryEmail =
-                emailInput.value.trim();
-
-            requestInProgress = true;
-
-            const button =
-                requestForm.querySelector(
-                    'button[type="submit"]'
-                );
-
-            button.disabled = true;
-            button.textContent = "ENVIANDO...";
-
-            requestMessage.textContent =
-                "Solicitando código...";
-
-            try {
-                await avantroxRequest(
-                    "/api/password/request-reset",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body: JSON.stringify({
-                            email: recoveryEmail
-                        })
-                    }
-                );
-
-                requestMessage.textContent =
-                    "Se o e-mail estiver cadastrado, você receberá as instruções de recuperação.";
-
-                verifyForm.hidden = false;
-                codeInput.focus();
-
-            } catch (error) {
-                requestMessage.textContent =
-                    error.message ||
-                    "Não foi possível solicitar o código.";
-
-            } finally {
-                requestInProgress = false;
-                button.disabled = false;
-                button.textContent =
-                    "ENVIAR CÓDIGO";
-            }
+    requestForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!requestForm.reportValidity()) return;
+        const button = requestForm.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.textContent = "ENVIANDO...";
+        requestMessage.textContent = "Solicitando link de recuperação...";
+        try {
+            const data = await avantroxRequest("/api/password/request-reset", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({email:emailInput.value.trim()})
+            });
+            requestMessage.textContent = data.message;
+        } catch (error) {
+            requestMessage.textContent = error.message || "Não foi possível enviar o link.";
+        } finally {
+            button.disabled = false;
+            button.textContent = "ENVIAR LINK";
         }
-    );
+    });
 
-    verifyForm.addEventListener(
-        "submit",
-        async event => {
-            event.preventDefault();
-
-            if (
-                verifyInProgress ||
-                !verifyForm.reportValidity()
-            ) {
-                return;
-            }
-
-            const code =
-                codeInput.value.trim();
-
-            const newPassword =
-                passwordInput.value;
-
-            const confirmPassword =
-                confirmPasswordInput.value;
-
-            if (newPassword.length < 8) {
-                verifyMessage.textContent =
-                    "A senha precisa ter pelo menos 8 caracteres.";
-                return;
-            }
-
-            if (
-                newPassword !==
-                confirmPassword
-            ) {
-                verifyMessage.textContent =
-                    "As senhas não são iguais.";
-                return;
-            }
-
-            verifyInProgress = true;
-
-            const button =
-                verifyForm.querySelector(
-                    'button[type="submit"]'
-                );
-
-            button.disabled = true;
-            button.textContent =
-                "VERIFICANDO...";
-
-            verifyMessage.textContent =
-                "Verificando código...";
-
-            try {
-                await avantroxRequest(
-                    "/api/password/reset",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body: JSON.stringify({
-                            email: recoveryEmail,
-                            code,
-                            newPassword
-                        })
-                    }
-                );
-
-                verifyMessage.textContent =
-                    "Senha alterada com sucesso! Redirecionando...";
-
-                verifyForm.reset();
-                requestForm.reset();
-
-                window.setTimeout(() => {
-                    window.location.href =
-                        "login.html";
-                }, 1800);
-
-            } catch (error) {
-                verifyMessage.textContent =
-                    error.message ||
-                    "Código inválido ou expirado.";
-
-            } finally {
-                verifyInProgress = false;
-                button.disabled = false;
-                button.textContent =
-                    "ALTERAR SENHA";
-            }
+    verifyForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!verifyForm.reportValidity()) return;
+        if (!recoveryToken) {
+            verifyMessage.textContent = "Solicite um novo link de recuperação.";
+            return;
         }
-    );
+        if (passwordInput.value !== confirmInput.value) {
+            verifyMessage.textContent = "As senhas não coincidem.";
+            return;
+        }
+        const button = verifyForm.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.textContent = "SALVANDO...";
+        verifyMessage.textContent = "Alterando senha...";
+        try {
+            await avantroxRequest("/api/password/reset", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    accessToken:recoveryToken,
+                    newPassword:passwordInput.value
+                })
+            });
+            recoveryToken = null;
+            verifyForm.reset();
+            verifyForm.hidden = true;
+            verifyMessage.textContent = "";
+            requestMessage.textContent = "Senha alterada com sucesso! Faça login.";
+            requestForm.hidden = false;
+        } catch (error) {
+            verifyMessage.textContent = error.message || "Não foi possível alterar a senha.";
+        } finally {
+            button.disabled = false;
+            button.textContent = "ALTERAR SENHA";
+        }
+    });
 })();
 
 

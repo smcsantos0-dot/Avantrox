@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Recuperar Senha | AVANTROX</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,7 +21,7 @@
 
             <p class="auth-description">
                 Digite seu e-mail cadastrado para receber
-                um código de recuperação.
+                um link seguro de recuperação.
             </p>
 
             <form id="recoveryRequestForm">
@@ -36,7 +37,7 @@
                 >
 
                 <button type="submit" class="auth-button">
-                    ENVIAR CÓDIGO
+                    ENVIAR LINK
                 </button>
 
                 <p id="recoveryRequestMessage" class="auth-message"></p>
@@ -47,14 +48,7 @@
 
                 <div class="recovery-divider"></div>
 
-                <label for="recoveryCode">Código recebido</label>
-
-                <input
-                    type="text"
-                    id="recoveryCode"
-                    placeholder="Digite o código"
-                    required
-                >
+                <p class="auth-description">Defina sua nova senha após abrir o link recebido por e-mail.</p>
 
                 <label for="newRecoveryPassword">Nova senha</label>
 

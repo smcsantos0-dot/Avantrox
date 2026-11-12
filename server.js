@@ -583,6 +583,89 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
 });
 
 // ==========================================
+// RECUPERAÇÃO DE SENHA - SUPABASE AUTH
+// ==========================================
+// Defina PUBLIC_SITE_URL para a URL pública quando publicar o site.
+const RECOVERY_SITE_URL = (process.env.PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+
+app.post("/api/password/request-reset", authLimiter, async (req, res) => {
+    const email = typeof req.body?.email === "string"
+        ? req.body.email.trim().toLowerCase() : "";
+    if (!validEmail(email)) {
+        return res.status(400).json({error:"Informe um e-mail válido."});
+    }
+    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+        return res.status(503).json({error:"Recuperação indisponível no momento."});
+    }
+    try {
+        const redirectTo = `${RECOVERY_SITE_URL}/recuperar-senha.html`;
+        const response = await fetch(
+            `${SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
+            {
+                method: "POST",
+                headers: {
+                    apikey: SUPABASE_PUBLISHABLE_KEY,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({email}),
+                signal: AbortSignal.timeout(15000)
+            }
+        );
+        if (!response.ok) {
+            console.error("Falha ao solicitar recuperação:", response.status);
+            if (response.status === 429) {
+                return res.status(429).json({error:"Muitas solicitações. Aguarde antes de tentar novamente."});
+            }
+            return res.status(502).json({error:"Não foi possível enviar a recuperação agora."});
+        }
+        // Resposta genérica para não revelar se o e-mail existe.
+        return res.json({success:true,
+            message:"Se o e-mail estiver cadastrado, você receberá um link de recuperação."});
+    } catch (error) {
+        console.error("Erro de conexão com recuperação:", error.message);
+        return res.status(502).json({error:"Serviço de recuperação temporariamente indisponível."});
+    }
+});
+
+app.post("/api/password/reset", authLimiter, async (req, res) => {
+    const token = req.body?.accessToken;
+    const password = req.body?.newPassword;
+    if (typeof token !== "string" || token.length < 20 || token.length > 8192 ||
+        typeof password !== "string" || password.length < 8 || password.length > 72) {
+        return res.status(400).json({error:"Link inválido ou senha fora do limite de 8 a 72 caracteres."});
+    }
+    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+        return res.status(503).json({error:"Recuperação indisponível no momento."});
+    }
+    try {
+        // O próprio Supabase valida o token recebido no link de recuperação.
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+            method:"PUT",
+            headers:{
+                apikey:SUPABASE_PUBLISHABLE_KEY,
+                Authorization:`Bearer ${token}`,
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({password}),
+            signal:AbortSignal.timeout(15000)
+        });
+        if (!response.ok) {
+            console.error("Falha na redefinição de senha:", response.status);
+            return res.status(response.status === 429 ? 429 : 400).json({
+                error: response.status === 429
+                    ? "Muitas tentativas. Aguarde alguns minutos."
+                    : "Link expirado, inválido ou senha rejeitada. Solicite um novo link."
+            });
+        }
+        // Não criar sessão de login automaticamente após redefinição.
+        return res.json({success:true,message:"Senha alterada. Entre com sua nova senha."});
+    } catch (error) {
+        console.error("Erro na redefinição:", error.message);
+        return res.status(502).json({error:"Não foi possível alterar a senha agora."});
+    }
+});
+
+// ==========================================
 // DADOS DO JOGADOR
 // ==========================================
 
